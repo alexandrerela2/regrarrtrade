@@ -1,27 +1,31 @@
 # 📊 Checklist de Trade — Risco x Retorno (RR)
 
-Este projeto é uma ferramenta simples em **HTML + JS** para calcular rapidamente a **relação Risco x Retorno (RR)** antes de abrir qualquer trade.
+Ferramenta simples em **HTML + JS** para calcular rapidamente a **relação Risco x Retorno (RR)** antes de abrir qualquer trade.
 
 ---
 
 ## 🚀 Como acessar
 
-A página está publicada no **GitHub Pages**:  
+Acesse pelo GitHub Pages:  
 👉 [Abrir Checklist de Trade](https://alexandrerela2.github.io/regrarrtrade/)
 
-*(Se ainda não abriu, aguarde alguns minutos após ativar o Pages nas configurações do repositório)*
+*(Se não abrir de primeira, verifique nas configurações do repositório se o **Pages** está habilitado em `Settings → Pages → Source: main branch / root` e aguarde alguns minutos para atualizar.)*
 
 ---
 
 ## 📋 Como usar
-1. Abra o link no navegador.  
-2. Escolha **Direção** (Long ou Short).  
-3. Preencha **Entrada**, **Stop** e pelo menos 1 **Alvo**.  
+1. Escolha **Direção** (Long ou Short).  
+2. Preencha **Entrada**, **Stop** e pelo menos um **Alvo**.  
+3. Informe sua **banca** e o **% de risco por trade**.  
 4. A tabela calcula automaticamente:
    - Distância até o Stop (**Risco**)  
-   - Distância até o Alvo (**Retorno**)  
+   - Distância até cada Alvo (**Retorno**)  
    - **RR (Retorno ÷ Risco)**  
-5. O selo fica **verde** quando o trade tem **RR ≥ 2:1**.
+   - **Tamanho da posição** (unidades)  
+   - **P/L estimado**  
+   - **RR ponderado** em caso de saídas parciais  
+
+O selo fica **verde** quando o trade tem **RR ≥ mínimo configurado** (por padrão 2:1).
 
 ---
 
@@ -30,8 +34,9 @@ A página está publicada no **GitHub Pages**:
 - Abra em qualquer editor de texto (ex.: **VS Code**).  
 - Principais pontos editáveis:
   - Placeholders (valores de exemplo nos inputs)  
-  - Cores do tema (no bloco `:root` dentro do `<style>`)  
-  - Regra mínima de RR (no script: `rr>=2`)  
+  - Cores do tema (variáveis no `<style>`)  
+  - RR mínimo (padrão 2.0, configurável na interface)  
+  - Saídas parciais (% por alvo)  
 
 ---
 
@@ -42,3 +47,4 @@ A página está publicada no **GitHub Pages**:
 ---
 
 ## 📂 Estrutura do projeto
+
