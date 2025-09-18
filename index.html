@@ -5,17 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Checklist de Trade — RR Automático</title>
 <style>
-  :root { --ok:#10b981; --bad:#ef4444; --mid:#f59e0b; --bg:#0b1220; --card:#121a2b; --text:#e5e7eb; --muted:#94a3b8; }
+  :root {
+    --ok:#10b981; --bad:#ef4444; --mid:#f59e0b;
+    --bg:#0b1220; --card:#121a2b; --text:#e5e7eb; --muted:#94a3b8; --line:#22304c;
+    --focus:#3b82f6;
+  }
+  *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;justify-content:center;align-items:flex-start;padding:24px}
-  .card{width:min(980px,100%);background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:20px}
-  h1{margin:0 0 12px;font-size:22px}
-  p.hint{color:var(--muted);margin:4px 0 14px}
+  .wrap{width:min(1100px,100%);display:grid;gap:14px}
+  .card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:18px}
+  h1{margin:0 0 4px;font-size:22px}
+  p.hint{color:var(--muted);margin:0 0 8px}
   .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end}
+  .grid-compact{grid-template-columns:repeat(8,1fr)}
+  @media (max-width: 900px){ .grid, .grid-compact{grid-template-columns:repeat(2,1fr)} }
   label{font-size:12px;color:var(--muted)}
   input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #243047;background:#0e1626;color:var(--text);outline:none}
-  input:focus,select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.25)}
-  table{width:100%;border-collapse:collapse;margin-top:16px}
-  th,td{padding:10px 12px;border-bottom:1px solid #22304c;text-align:right}
+  input:focus,select:focus{border-color:var(--focus);box-shadow:0 0 0 3px color-mix(in oklab, var(--focus) 25%, transparent)}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;vertical-align:middle}
   th{text-align:center;color:#c7d2fe;font-weight:600;background:#0f182b}
   td.label, th.label{text-align:left}
   .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
@@ -24,153 +32,309 @@
   .mid{background:color-mix(in oklab, var(--mid) 20%, transparent);color:var(--mid);border:1px solid var(--mid)}
   .footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:#a3b2cc;font-size:12px}
   .small{font-size:12px;color:var(--muted)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{background:#0e1626;border:1px solid var(--line);padding:8px 12px;border-radius:10px;color:var(--text);cursor:pointer}
+  .btn:hover{border-color:#3b82f6}
+  .strong{font-weight:700}
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Checklist de Trade — Risco x Retorno (RR)</h1>
-    <p class="hint">Preencha <b>Entrada</b>, <b>Stop</b> e alvos. Selecione a direção (Long/Short). A tabela calcula <i>Risco</i>, <i>Retorno</i> e <i>RR</i> automaticamente.</p>
-
-    <div class="grid">
-      <div>
-        <label for="direcao">Direção</label>
-        <select id="direcao">
-          <option value="long">Long (Compra)</option>
-          <option value="short">Short (Venda)</option>
-        </select>
-      </div>
-      <div>
-        <label for="entrada">Entrada</label>
-        <input id="entrada" type="number" step="0.01" placeholder="ex: 115000" />
-      </div>
-      <div>
-        <label for="stop">Stop</label>
-        <input id="stop" type="number" step="0.01" placeholder="ex: 114400" />
-      </div>
-      <div>
-        <label for="alvo1">Alvo 1</label>
-        <input id="alvo1" type="number" step="0.01" placeholder="ex: 115700" />
-      </div>
-      <div>
-        <label for="alvo2">Alvo 2</label>
-        <input id="alvo2" type="number" step="0.01" placeholder="opcional" />
-      </div>
-      <div>
-        <label for="alvo3">Alvo 3</label>
-        <input id="alvo3" type="number" step="0.01" placeholder="opcional" />
+  <div class="wrap">
+    <div class="card">
+      <h1>Checklist de Trade — Risco x Retorno (RR)</h1>
+      <p class="hint">Preencha Entrada, Stop e Alvos. Defina seu risco da banca e (opcional) saídas parciais. Seus dados ficam salvos no navegador.</p>
+      <div class="grid">
+        <div>
+          <label for="direcao">Direção</label>
+          <select id="direcao">
+            <option value="long">Long (Compra)</option>
+            <option value="short">Short (Venda)</option>
+          </select>
+        </div>
+        <div>
+          <label for="rrMin">RR mínimo exigido</label>
+          <input id="rrMin" type="number" step="0.1" value="2.0" />
+        </div>
+        <div>
+          <label for="entrada">Entrada</label>
+          <input id="entrada" type="number" step="0.01" placeholder="115000" />
+        </div>
+        <div>
+          <label for="stop">Stop</label>
+          <input id="stop" type="number" step="0.01" placeholder="114400" />
+        </div>
+        <div>
+          <label for="alvo1">Alvo 1</label>
+          <input id="alvo1" type="number" step="0.01" placeholder="115700" />
+        </div>
+        <div>
+          <label for="alvo2">Alvo 2</label>
+          <input id="alvo2" type="number" step="0.01" placeholder="116000 (opcional)" />
+        </div>
+        <div>
+          <label for="alvo3">Alvo 3</label>
+          <input id="alvo3" type="number" step="0.01" placeholder="116300 (opcional)" />
+        </div>
+        <div>
+          <label for="tick">Valor do tick (opcional)</label>
+          <input id="tick" type="number" step="0.0001" placeholder="1.00" />
+        </div>
       </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th class="label">Nível</th>
-          <th>Risco</th>
-          <th>Retorno</th>
-          <th>RR</th>
-          <th>Decisão</th>
-        </tr>
-      </thead>
-      <tbody id="rows">
-        <tr>
-          <td class="label">Alvo 1</td>
-          <td id="r1">—</td>
-          <td id="ret1">—</td>
-          <td id="rr1">—</td>
-          <td id="d1">—</td>
-        </tr>
-        <tr>
-          <td class="label">Alvo 2</td>
-          <td id="r2">—</td>
-          <td id="ret2">—</td>
-          <td id="rr2">—</td>
-          <td id="d2">—</td>
-        </tr>
-        <tr>
-          <td class="label">Alvo 3</td>
-          <td id="r3">—</td>
-          <td id="ret3">—</td>
-          <td id="rr3">—</td>
-          <td id="d3">—</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card">
+      <h2 style="margin:0 0 8px;font-size:18px">Gestão de Risco — Tamanho da Posição</h2>
+      <div class="grid grid-compact">
+        <div>
+          <label for="banca">Banca (USDT)</label>
+          <input id="banca" type="number" step="0.01" placeholder="1000" />
+        </div>
+        <div>
+          <label for="riscoPct">Risco por trade (% da banca)</label>
+          <input id="riscoPct" type="number" step="0.1" value="1.0" />
+        </div>
+        <div>
+          <label for="alocMin">Mín. alocado (opcional)</label>
+          <input id="alocMin" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div>
+          <label for="alocMax">Máx. alocado (opcional)</label>
+          <input id="alocMax" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div>
+          <label for="w1">% saída no Alvo 1</label>
+          <input id="w1" type="number" step="1" value="50" />
+        </div>
+        <div>
+          <label for="w2">% saída no Alvo 2</label>
+          <input id="w2" type="number" step="1" value="30" />
+        </div>
+        <div>
+          <label for="w3">% saída no Alvo 3</label>
+          <input id="w3" type="number" step="1" value="20" />
+        </div>
+        <div>
+          <label for="fees">Taxa total (bps) opcional</label>
+          <input id="fees" type="number" step="1" value="0" />
+        </div>
+      </div>
+      <p class="small">Tamanho da posição (unidades) = (Banca × Risco%) ÷ Distância até o Stop. Saídas parciais calculam <b>RR ponderado</b>.</p>
+    </div>
 
-    <p class="small">Regra salva: operar apenas quando <b>RR ≥ 2:1</b> (preferência). Ajuste conforme o contexto do gráfico.</p>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th class="label">Nível</th>
+            <th>Risco (Δ até Stop)</th>
+            <th>Retorno (Δ até Alvo)</th>
+            <th>RR</th>
+            <th>Unidades</th>
+            <th>P/L Estimado</th>
+            <th>Decisão</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr>
+            <td class="label">Alvo 1</td>
+            <td id="r1">—</td>
+            <td id="ret1">—</td>
+            <td id="rr1">—</td>
+            <td id="u1">—</td>
+            <td id="pl1">—</td>
+            <td id="d1">—</td>
+          </tr>
+          <tr>
+            <td class="label">Alvo 2</td>
+            <td id="r2">—</td>
+            <td id="ret2">—</td>
+            <td id="rr2">—</td>
+            <td id="u2">—</td>
+            <td id="pl2">—</td>
+            <td id="d2">—</td>
+          </tr>
+          <tr>
+            <td class="label">Alvo 3</td>
+            <td id="r3">—</td>
+            <td id="ret3">—</td>
+            <td id="rr3">—</td>
+            <td id="u3">—</td>
+            <td id="pl3">—</td>
+            <td id="d3">—</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th class="label">Ponderado (saídas parciais)</th>
+            <th id="rW">—</th>
+            <th id="retW">—</th>
+            <th id="rrW">—</th>
+            <th id="uW">—</th>
+            <th id="plW">—</th>
+            <th id="dW">—</th>
+          </tr>
+        </tfoot>
+      </table>
 
-    <div class="footer">
-      <span id="summary" class="pill mid">Preencha os campos…</span>
+      <div class="footer">
+        <span id="summary" class="pill mid">Preencha os campos…</span>
+        <button id="saveBtn" class="btn">Salvar preset</button>
+        <button id="clearBtn" class="btn">Limpar</button>
+      </div>
+      <p class="small">Observação: cálculos ignoram alavancagem e consideram taxas (se informadas) como base points (bps) totais ida+volta. Para futuros, ajuste o campo "tick" conforme o ativo.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:16px">Como usar</h3>
+      <ul class="small" style="margin:0 0 0 18px;line-height:1.6">
+        <li>Defina Entrada, Stop e Alvos; escolha Long/Short e, se quiser, RR mínimo (default 2.0).</li>
+        <li>Em “Gestão de Risco”, informe sua banca e % de risco por trade para calcular o tamanho da posição.</li>
+        <li>Ajuste as porcentagens de saída (50/30/20 por padrão) para ver o RR ponderado.</li>
+        <li>Use “Salvar preset” para gravar suas preferências no navegador.</li>
+      </ul>
     </div>
   </div>
 
 <script>
 (function(){
   const $ = id => document.getElementById(id);
-  const fields = ['direcao','entrada','stop','alvo1','alvo2','alvo3'].map($);
+  const ids = ["direcao","rrMin","entrada","stop","alvo1","alvo2","alvo3","tick","banca","riscoPct","alocMin","alocMax","w1","w2","w3","fees"];
+  const get = k => $(k).value;
+  const set = (k,v) => { $(k).value = v; };
 
-  function fmt(n){
-    if(!isFinite(n)) return '—';
+  // Load saved preset
+  function load(){
+    try{
+      const raw = localStorage.getItem("rr_preset_v2");
+      if(!raw) return;
+      const obj = JSON.parse(raw);
+      ids.forEach(k => { if(obj[k] !== undefined) set(k, obj[k]); });
+    }catch(e){}
+  }
+  function save(){
+    const obj = {};
+    ids.forEach(k => obj[k] = get(k));
+    localStorage.setItem("rr_preset_v2", JSON.stringify(obj));
+  }
+  function clearAll(){
+    ids.forEach(k => set(k,""));
+    set("direcao","long"); set("rrMin","2.0"); set("riscoPct","1.0"); set("w1","50"); set("w2","30"); set("w3","20"); set("fees","0");
+    update();
+  }
+
+  function fmt(n, dec=2){
+    if(!isFinite(n)) return "—";
     const abs = Math.abs(n);
-    return (abs >= 1000) ? n.toFixed(0) : n.toFixed(2);
+    if(abs >= 1000) return n.toFixed(0);
+    return n.toFixed(dec);
   }
-  function pill(el, rr){
-    el.className = 'pill ' + (rr>=2 ? 'ok' : (rr>0 ? 'mid' : 'bad'));
-    el.textContent = rr>=2 ? 'Trade Válido (RR ≥ 2)' : (rr>0 ? 'RR baixo' : 'Inválido');
+  function badge(rr, rrMin){
+    const span = document.createElement("span");
+    const cls = rr>=rrMin ? "ok" : (rr>0 ? "mid" : "bad");
+    span.className = "pill " + cls;
+    span.textContent = rr>=rrMin ? `Trade Válido (RR ≥ ${rrMin})` : (rr>0 ? "RR baixo" : "Inválido");
+    return span;
   }
-  function setCell(id, val){ $(id).textContent = val; }
 
-  function computeForTarget(target, idx){
-    const dir = $('direcao').value;
-    const e = parseFloat($('entrada').value);
-    const s = parseFloat($('stop').value);
-    const t = parseFloat($(target).value);
+  function computeTarget(targetId, idx, rrMin, units){
+    const dir = get("direcao");
+    const e = parseFloat(get("entrada"));
+    const s = parseFloat(get("stop"));
+    const t = parseFloat($(targetId).value);
+    const fees = parseFloat(get("fees")) || 0;
 
-    if(!isFinite(e) || !isFinite(s) || !isFinite(t)) {
-      setCell('r'+idx,'—'); setCell('ret'+idx,'—'); setCell('rr'+idx,'—'); $('d'+idx).textContent = '—';
-      return NaN;
+    if(!isFinite(e) || !isFinite(s) || !isFinite(t)){
+      ["r","ret","rr","u","pl"].forEach(p => $(`${p}${idx}`).textContent = "—");
+      $("d"+idx).textContent = "—";
+      return { rr: NaN, risco: NaN, ret: NaN, pl: NaN };
     }
 
-    // risco é a distância até o stop (sempre positiva)
     const risco = Math.abs(s - e);
+    let ret = dir==="long" ? (t - e) : (e - t);
+    const rr = ret / risco;
 
-    // retorno depende da direção
-    let retorno = 0;
-    if(dir==='long'){
-      retorno = t - e;        // alvo acima da entrada
-    } else { // short
-      retorno = e - t;        // alvo abaixo da entrada
+    // Units and P/L
+    const u = isFinite(units) ? units : NaN;
+    // fees in bps (basis points): apply rough total fees on notional move (approximate)
+    // We'll subtract fees proportionally from PL
+    let pl = isFinite(u) ? (ret * u) : NaN;
+    if(isFinite(pl) && fees>0){
+      const feeFrac = fees / 10000; // bps -> fraction
+      // Approximate notional traded twice: entrada + saída ao alvo
+      const notional = isFinite(u) ? (Math.abs(e)*u + Math.abs(t)*u) : 0;
+      pl -= notional * feeFrac;
     }
 
-    const rr = retorno / risco;
+    $("r"+idx).textContent = fmt(risco);
+    $("ret"+idx).textContent = fmt(ret);
+    $("rr"+idx).textContent = isFinite(rr) ? rr.toFixed(2)+":1" : "—";
+    $("u"+idx).textContent = isFinite(u) ? fmt(u,4) : "—";
+    $("pl"+idx).textContent = isFinite(pl) ? fmt(pl) : "—";
+    const cell = $("d"+idx); cell.innerHTML = ""; cell.appendChild(badge(rr, rrMin));
 
-    setCell('r'+idx, fmt(risco));
-    setCell('ret'+idx, fmt(retorno));
-    setCell('rr'+idx, isFinite(rr) ? rr.toFixed(2)+':1' : '—');
-
-    const badge = document.createElement('span');
-    pill(badge, rr);
-    const cell = $('d'+idx);
-    cell.innerHTML = ''; cell.appendChild(badge);
-
-    return rr;
+    return { rr, risco, ret, pl };
   }
 
   function update(){
-    const rr1 = computeForTarget('alvo1',1);
-    const rr2 = computeForTarget('alvo2',2);
-    const rr3 = computeForTarget('alvo3',3);
+    // Read inputs
+    const rrMin = parseFloat(get("rrMin")) || 2.0;
+    const e = parseFloat(get("entrada"));
+    const s = parseFloat(get("stop"));
+    const banca = parseFloat(get("banca"));
+    const riscoPct = (parseFloat(get("riscoPct")) || 0) / 100;
+    const alocMin = parseFloat(get("alocMin")) || 0;
+    const alocMax = parseFloat(get("alocMax")) || 0;
 
-    // resumo geral (melhor RR válido)
-    const arr = [rr1, rr2, rr3].filter(x=>isFinite(x));
-    const summary = $('summary');
+    // Units from bankroll risk
+    let riscoAbs = (isFinite(banca) && isFinite(riscoPct)) ? banca * riscoPct : NaN;
+    let deltaStop = (isFinite(e) && isFinite(s)) ? Math.abs(s - e) : NaN;
+    let units = (isFinite(riscoAbs) && isFinite(deltaStop) && deltaStop>0) ? (riscoAbs / deltaStop) : NaN;
+
+    // Respect min/max allocation if set (interpreted as notional USDT = units * entrada)
+    if(isFinite(units) && isFinite(e)){
+      const notional = units * Math.abs(e);
+      if(alocMin>0 && notional < alocMin) units = alocMin / Math.abs(e);
+      if(alocMax>0 && notional > alocMax) units = alocMax / Math.abs(e);
+    }
+
+    const r1 = computeTarget("alvo1",1, rrMin, units);
+    const r2 = computeTarget("alvo2",2, rrMin, units);
+    const r3 = computeTarget("alvo3",3, rrMin, units);
+
+    // Weighted RR (partial exits)
+    const w1 = (parseFloat(get("w1")) || 0) / 100;
+    const w2 = (parseFloat(get("w2")) || 0) / 100;
+    const w3 = (parseFloat(get("w3")) || 0) / 100;
+    const wSum = w1 + w2 + w3;
+    const norm = wSum>0 ? wSum : 1;
+
+    const rrW = ((r1.rr||0)*w1 + (r2.rr||0)*w2 + (r3.rr||0)*w3) / norm;
+    const riscoW = (r1.risco||0); // risco é o mesmo (distância até stop)
+    const retW = ((r1.ret||0)*w1 + (r2.ret||0)*w2 + (r3.ret||0)*w3) / norm;
+    const plW  = ((isFinite(r1.pl)?r1.pl:0)*w1 + (isFinite(r2.pl)?r2.pl:0)*w2 + (isFinite(r3.pl)?r3.pl:0)*w3) / norm;
+
+    $("rW").textContent = isFinite(riscoW)? fmt(riscoW) : "—";
+    $("retW").textContent = isFinite(retW)? fmt(retW) : "—";
+    $("rrW").textContent = isFinite(rrW)? rrW.toFixed(2)+":1" : "—";
+    $("uW").textContent = isFinite(units)? fmt(units,4) : "—";
+    $("plW").textContent = isFinite(plW)? fmt(plW) : "—";
+    const cW = $("dW"); cW.innerHTML = ""; cW.appendChild(badge(rrW, rrMin));
+
+    // Summary badge (best RR among valid)
+    const arr = [r1.rr, r2.rr].concat(r3.rr).filter(x=>isFinite(x));
+    const summary = $("summary");
     if(arr.length===0){ summary.className='pill mid'; summary.textContent='Preencha Entrada, Stop e pelo menos 1 Alvo'; return; }
     const best = Math.max.apply(null, arr);
-    pill(summary, best);
-    summary.textContent += ` • Melhor RR: ${best.toFixed(2)}:1`;
+    summary.className = 'pill ' + (best>=rrMin ? 'ok' : (best>0 ? 'mid' : 'bad'));
+    summary.textContent = `Melhor RR: ${isFinite(best)?best.toFixed(2):"—"}:1 • RR mínimo: ${rrMin}`;
   }
 
-  fields.forEach(el => el.addEventListener('input', update));
-  update();
+  // Wire events
+  ids.forEach(k => $(k).addEventListener("input", update));
+  $("saveBtn").addEventListener("click", ()=>{ save(); update(); alert("Preset salvo no navegador ✔"); });
+  $("clearBtn").addEventListener("click", ()=>{ if(confirm("Limpar todos os campos?")) clearAll(); });
+
+  load(); update();
 })();
 </script>
 </body>
